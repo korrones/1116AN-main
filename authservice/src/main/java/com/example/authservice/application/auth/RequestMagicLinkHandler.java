@@ -1,6 +1,6 @@
 package com.example.authservice.application.auth;
 
-import com.example.authservice.application.ports.MailSender;
+import com.example.authservice.application.ports.MailSender; // vamos remover
 import com.example.authservice.domain.auth.MagicLink;
 import com.example.authservice.domain.auth.MagicLinkRepository;
 import com.example.authservice.domain.auth.vo.ExpiresAt;
@@ -11,6 +11,7 @@ import com.example.authservice.domain.user.vo.Email;
 import com.example.authservice.infrastructure.config.AppProperties;
 import com.example.authservice.support.Digests;
 import com.example.authservice.support.RandomTokenGenerator;
+import com.example.authservice.service.EmailService; // novo import
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ import java.util.Optional;
 public class RequestMagicLinkHandler {
     private final UserRepository userRepository;
     private final MagicLinkRepository magicLinkRepository;
-    private final MailSender mailSender;
+    private final EmailService emailService; // substitui MailSender
     private final AppProperties appProperties;
 
     public record Result(boolean accepted) {};
@@ -57,11 +58,13 @@ public class RequestMagicLinkHandler {
         String url = base + (base.contains("?") ? "&" : "?") +
             "token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
 
-        mailSender.sendMagicLink(
+        
+        emailService.enviar(
             email.getValue(),
-            url,
-            expiresAt
+            "Seu link mágico de login",
+            "Clique no link para logar: " + url + "\nLink válido até: " + expiresAt
         );
+
         return new Result(true);
     }
 }
