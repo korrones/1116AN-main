@@ -30,7 +30,7 @@ public class AuthController {
     }
 
     @PostMapping("/login/magic")
-    public ResponseEntity<Void> requstMagicLink(@Valid @RequestBody MagicLinkRequest req) {
+    public ResponseEntity<Void> requestMagicLink(@Valid @RequestBody MagicLinkRequest req) {
         requestMagicLinkHandler.handle(req.email());
         return ResponseEntity.accepted().build();
     }
